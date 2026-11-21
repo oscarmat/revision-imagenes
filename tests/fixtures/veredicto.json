@@ -1,0 +1,499 @@
+{
+ "alto": 0.7,
+ "bajo": 0.3,
+ "preguntas": {
+  "es_logotipo": {
+   "instructions": "x"
+  },
+  "se_ven_manos": {
+   "instructions": "x"
+  },
+  "se_ven_personas": {
+   "instructions": "x"
+  },
+  "aparecen_ninos": {
+   "instructions": "x",
+   "malo": "si",
+   "efecto": "rechazar"
+  },
+  "relacionada_con_el_tema": {
+   "instructions": "x",
+   "malo": "no",
+   "ignorar_si": "es_logotipo",
+   "ignorar_si_ampliada": true
+  },
+  "baja_calidad": {
+   "instructions": "x",
+   "malo": "si",
+   "ignorar_si": "es_logotipo",
+   "ignorar_si_ampliada": true
+  },
+  "manos_deformes": {
+   "instructions": "x",
+   "malo": "si",
+   "efecto": "rechazar",
+   "solo_si": "se_ven_manos",
+   "ignorar_si": "es_logotipo",
+   "ignorar_si_ampliada": true
+  },
+  "cuerpo_incompleto": {
+   "instructions": "x",
+   "malo": "si",
+   "efecto": "rechazar",
+   "solo_si": "se_ven_personas",
+   "ignorar_si": "es_logotipo",
+   "ignorar_si_ampliada": true
+  },
+  "menciona_western_union": {
+   "instructions": "x",
+   "umbral": 0.8
+  },
+  "menciona_money_exchange": {
+   "instructions": "x",
+   "umbral": 0.95
+  }
+ },
+ "casos": [
+  {
+   "nombre": "limpia",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "ninos rechaza",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.9,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "rechazar",
+    "motivos": "aparecen_ninos=0.90",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "umbral alto exacto rechaza",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.7,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "rechazar",
+    "motivos": "aparecen_ninos=0.70",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "zona intermedia revisa",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.5,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "revisar",
+    "motivos": "aparecen_ninos=0.50",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "umbral bajo exacto revisa",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.3,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "revisar",
+    "motivos": "baja_calidad=0.30",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "bajo el umbral bajo ok",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.29,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "malo no: tema irrelevante revisa",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.1,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "revisar",
+    "motivos": "relacionada_con_el_tema=0.10",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "malo no: tema relevante ok",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "logotipo ignora calidad y tema",
+   "p": {
+    "es_logotipo": 0.9,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.05,
+    "baja_calidad": 0.9,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "logotipo justo bajo ALTO no ignora",
+   "p": {
+    "es_logotipo": 0.69,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.9,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "revisar",
+    "motivos": "baja_calidad=0.90",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "ampliada ignora calidad",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.9,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": true,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "no ampliada no ignora calidad",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.9,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "revisar",
+    "motivos": "baja_calidad=0.90",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "manos deformes sin manos se ignora",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.2,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.9,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "manos deformes con manos rechaza",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.8,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.9,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "rechazar",
+    "motivos": "manos_deformes=0.90",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "solo_si justo en 0.5 aplica",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.5,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.9,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "rechazar",
+    "motivos": "manos_deformes=0.90",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "cuerpo incompleto con personas rechaza",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.9,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.8,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "rechazar",
+    "motivos": "cuerpo_incompleto=0.80",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "ampliada ignora defectos",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.9,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.9,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": true,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "rechazar y revisar juntos: rechaza",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.9,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.5,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "rechazar",
+    "motivos": "aparecen_ninos=0.90,baja_calidad=0.50",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "operador detectado",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.85,
+    "menciona_money_exchange": 0.05
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": "western_union"
+   }
+  },
+  {
+   "nombre": "operador generico bajo su umbral",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.9
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": ""
+   }
+  },
+  {
+   "nombre": "operador generico en su umbral",
+   "p": {
+    "es_logotipo": 0.05,
+    "se_ven_manos": 0.05,
+    "se_ven_personas": 0.05,
+    "aparecen_ninos": 0.05,
+    "relacionada_con_el_tema": 0.95,
+    "baja_calidad": 0.05,
+    "manos_deformes": 0.05,
+    "cuerpo_incompleto": 0.05,
+    "menciona_western_union": 0.05,
+    "menciona_money_exchange": 0.95
+   },
+   "ampliada": false,
+   "esperado": {
+    "nivel": "ok",
+    "motivos": "",
+    "detectados": "money_exchange"
+   }
+  }
+ ]
+}
