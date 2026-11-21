@@ -10,6 +10,7 @@ class RI_Ajustes {
 	public static function iniciar(): void {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
 		add_action( 'admin_post_ri_guardar_clave', array( __CLASS__, 'guardar' ) );
+		add_action( 'admin_post_ri_cola', array( __CLASS__, 'cola' ) );
 		add_filter( 'plugin_action_links_revision-imagenes/revision-imagenes.php', array( __CLASS__, 'enlace' ) );
 	}
 
@@ -42,6 +43,44 @@ class RI_Ajustes {
 		exit;
 	}
 
+	public static function cola(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( 'Sin permisos.', 403 );
+		}
+		check_admin_referer( 'ri_cola' );
+		$accion = isset( $_POST['ri_accion'] ) ? sanitize_key( $_POST['ri_accion'] ) : '';
+		if ( 'sin-revisar' === $accion ) {
+			RI_Cola::encolar_sin_revisar();
+		} elseif ( 'pausar' === $accion ) {
+			RI_Cola::pausar();
+		} elseif ( 'reanudar' === $accion ) {
+			RI_Cola::reanudar();
+		} elseif ( 'vaciar' === $accion ) {
+			RI_Cola::vaciar();
+		}
+		wp_safe_redirect( add_query_arg( array( 'page' => self::PAGINA ), admin_url( 'options-general.php' ) ) );
+		exit;
+	}
+
+	private static function pintar_cola(): void {
+		$r = RI_Cola::resumen();
+		$f = function ( $t ) {
+			return $t ? esc_html( wp_date( 'd/m/Y H:i', $t ) ) : '—';
+		};
+		echo '<h2>Cola de revisión</h2><p>Estado: <strong>' . esc_html( $r['estado'] ) . '</strong>. Pendientes: ' . (int) $r['pendientes'] . '. Revisadas: ' . (int) $r['hechas'] . '. Fallidas: ' . count( $r['fallidas'] ) . '. Lote de ' . (int) $r['lote'] . ' cada ' . (int) $r['intervalo'] . ' min. Próxima ejecución: ' . $f( $r['proxima'] ) . '.</p>';
+		if ( $r['ultimo_error'] ) {
+			echo '<p>Último error: ' . esc_html( $r['ultimo_error'] ) . '</p>';
+		}
+		if ( $r['wp_cron_desactivado'] ) {
+			echo '<p><strong>WP-Cron está desactivado (DISABLE_WP_CRON): hace falta un cron del sistema que llame a wp-cron.php.</strong></p>';
+		}
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="ri_cola">';
+		wp_nonce_field( 'ri_cola' );
+		echo '<button class="button button-primary" name="ri_accion" value="sin-revisar">Encolar imágenes sin revisar</button> ';
+		echo '<button class="button" name="ri_accion" value="' . ( 'activa' === $r['estado'] ? 'pausar' : 'reanudar' ) . '">' . ( 'activa' === $r['estado'] ? 'Pausar' : 'Reanudar' ) . '</button> ';
+		echo '<button class="button" name="ri_accion" value="vaciar">Vaciar cola</button></form>';
+	}
+
 	public static function pintar(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -54,6 +93,7 @@ class RI_Ajustes {
 		if ( isset( $avisos[ $aviso ] ) ) {
 			echo '<div class="notice notice-' . ( 'error' === $aviso ? 'error' : 'info' ) . ' is-dismissible"><p>' . esc_html( $avisos[ $aviso ] ) . '</p></div>';
 		}
+		self::pintar_cola();
 		echo '<h2>Clave de la API de TypeSafe (Jev)</h2>';
 		if ( 'constante' === $origen ) {
 			echo '<p>Definida en <code>wp-config.php</code> (<code>RI_TYPESAFE_API_KEY</code>), termina en <code>' . esc_html( RI_Clave::pista( (string) $clave ) ) . '</code>. Tiene prioridad sobre la guardada aquí.</p>';

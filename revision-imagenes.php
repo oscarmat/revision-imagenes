@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Revisión de imágenes
  * Description: Taxonomía y metadatos para los veredictos de Jev sobre la biblioteca de medios (skill wp-revisar-imagenes de Fede). Añade columna y filtro en la biblioteca para localizar y borrar las rechazadas.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Update URI: https://github.com/oscarmat/revision-imagenes
  *
  * - Taxonomía `revision_imagen` (etiquetas, sin jerarquía): estado (rechazar/revisar/ok), motivos y operadores detectados.
@@ -23,11 +23,31 @@ require_once __DIR__ . '/includes/class-ri-jev.php';
 require_once __DIR__ . '/includes/class-ri-config.php';
 require_once __DIR__ . '/includes/class-ri-etiquetas.php';
 require_once __DIR__ . '/includes/class-ri-revisor.php';
+require_once __DIR__ . '/includes/class-ri-cola.php';
 require_once __DIR__ . '/includes/class-ri-rest.php';
 require_once __DIR__ . '/includes/class-ri-actualizador.php';
 
 RI_Ajustes::iniciar();
+RI_Cola::iniciar();
 RI_Rest::iniciar();
+register_deactivation_hook( __FILE__, array( 'RI_Cola', 'desactivar' ) );
+
+// Acción masiva en la biblioteca: añade las imágenes elegidas a la cola de revisión.
+add_filter( 'bulk_actions-upload', function ( $acciones ) {
+	$acciones['ri_revisar'] = 'Revisar con Jev';
+	return $acciones;
+} );
+add_filter( 'handle_bulk_actions-upload', function ( $url, $accion, $ids ) {
+	if ( 'ri_revisar' !== $accion || ! current_user_can( 'upload_files' ) ) {
+		return $url;
+	}
+	return add_query_arg( 'ri_encoladas', RI_Cola::encolar( $ids ), $url );
+}, 10, 3 );
+add_action( 'admin_notices', function () {
+	if ( isset( $_GET['ri_encoladas'] ) ) {
+		echo '<div class="notice notice-info is-dismissible"><p>' . esc_html( (int) $_GET['ri_encoladas'] ) . ' imágenes añadidas a la cola de revisión.</p></div>';
+	}
+} );
 RI_Actualizador::iniciar();
 
 add_action( 'init', function () {

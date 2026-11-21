@@ -22,6 +22,10 @@ class RI_Rest {
 		register_rest_route( 'revision-imagenes/v1', '/estado', array(
 			'methods' => 'GET', 'callback' => array( __CLASS__, 'estado' ), 'permission_callback' => $permiso,
 		) );
+		register_rest_route( 'revision-imagenes/v1', '/cola', array(
+			array( 'methods' => 'GET', 'callback' => array( __CLASS__, 'cola' ), 'permission_callback' => $permiso ),
+			array( 'methods' => 'POST', 'callback' => array( __CLASS__, 'cola_accion' ), 'permission_callback' => $permiso ),
+		) );
 		register_rest_route( 'revision-imagenes/v1', '/revisar', array(
 			'methods' => 'POST', 'callback' => array( __CLASS__, 'revisar' ), 'permission_callback' => $permiso,
 			'args'    => array( 'ids' => array( 'required' => true, 'type' => 'array', 'items' => array( 'type' => 'integer' ) ) ),
@@ -44,7 +48,7 @@ class RI_Rest {
 
 	public static function estado() {
 		return rest_ensure_response( array(
-			'version'  => '1.2.0',
+			'version'  => '1.3.0',
 			'php'      => PHP_VERSION,
 			'wp'       => get_bloginfo( 'version' ),
 			'clave'    => RI_Clave::origen(),
@@ -52,6 +56,7 @@ class RI_Rest {
 			'config'   => null !== RI_Config::obtener(),
 			'imagenes' => RI_Imagen::soporte(),
 			'medios'   => self::total_imagenes(),
+			'cola'     => RI_Cola::resumen(),
 		) );
 	}
 
@@ -59,6 +64,38 @@ class RI_Rest {
 		$c = (array) wp_count_attachments( 'image' );
 		unset( $c['trash'] );
 		return (int) array_sum( $c );
+	}
+
+	public static function cola() {
+		return rest_ensure_response( RI_Cola::resumen() );
+	}
+
+	/** Cuerpo: {accion: encolar|sin-revisar|pausar|reanudar|vaciar|ajustar, ids?, intervalo?, lote?}. */
+	public static function cola_accion( WP_REST_Request $req ) {
+		$p = (array) $req->get_json_params();
+		switch ( $p['accion'] ?? '' ) {
+			case 'encolar':
+				RI_Cola::encolar( array_map( 'intval', (array) ( $p['ids'] ?? array() ) ) );
+				break;
+			case 'sin-revisar':
+				RI_Cola::encolar_sin_revisar();
+				break;
+			case 'pausar':
+				RI_Cola::pausar();
+				break;
+			case 'reanudar':
+				RI_Cola::reanudar();
+				break;
+			case 'vaciar':
+				RI_Cola::vaciar();
+				break;
+			case 'ajustar':
+				RI_Cola::ajustar( isset( $p['intervalo'] ) ? (int) $p['intervalo'] : null, isset( $p['lote'] ) ? (int) $p['lote'] : null );
+				break;
+			default:
+				return new WP_REST_Response( array( 'errores' => array( 'accion no válida' ) ), 400 );
+		}
+		return rest_ensure_response( RI_Cola::resumen() );
 	}
 
 	public static function revisar( WP_REST_Request $req ) {

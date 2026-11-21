@@ -9,7 +9,7 @@ Fase 1 (en curso):
 - `includes/class-ri-veredicto.php`: tabla de verdad (probabilidades -> ok / revisar / rechazar). Port de la skill `wp-revisar-imagenes` de Fede.
 - `tests/fixtures/veredicto.json`: casos compartidos con la implementación Python. `php tests/run.php` los ejecuta.
 
-Pendiente: cliente Jev, normalización de imagen, cola por lotes con tope diario, pantalla de Herramientas y acción masiva, endpoint REST de configuración, `Update URI` para autoactualizar.
+Cola en segundo plano (WP-Cron, un evento cada pocos minutos tras el último planificado), pantalla en Ajustes, acción masiva «Revisar con Jev» y REST `/cola`.
 
 ## Diseño
 
