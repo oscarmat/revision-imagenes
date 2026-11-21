@@ -48,7 +48,7 @@ class RI_Rest {
 
 	public static function estado() {
 		return rest_ensure_response( array(
-			'version'  => '1.3.0',
+			'version'  => '1.3.1',
 			'php'      => PHP_VERSION,
 			'wp'       => get_bloginfo( 'version' ),
 			'clave'    => RI_Clave::origen(),

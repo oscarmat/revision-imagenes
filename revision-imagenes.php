@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Revisión de imágenes
  * Description: Taxonomía y metadatos para los veredictos de Jev sobre la biblioteca de medios (skill wp-revisar-imagenes de Fede). Añade columna y filtro en la biblioteca para localizar y borrar las rechazadas.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Update URI: https://github.com/oscarmat/revision-imagenes
  *
  * - Taxonomía `revision_imagen` (etiquetas, sin jerarquía): estado (rechazar/revisar/ok), motivos y operadores detectados.
@@ -34,13 +34,18 @@ register_deactivation_hook( __FILE__, array( 'RI_Cola', 'desactivar' ) );
 
 // Acción masiva en la biblioteca: añade las imágenes elegidas a la cola de revisión.
 add_filter( 'bulk_actions-upload', function ( $acciones ) {
-	$acciones['ri_revisar'] = 'Revisar con Jev';
+	if ( current_user_can( 'manage_options' ) ) {  // gasta llamadas de pago a Jev: mismo permiso que el resto del plugin
+		$acciones['ri_revisar'] = 'Revisar con Jev';
+	}
 	return $acciones;
 } );
 add_filter( 'handle_bulk_actions-upload', function ( $url, $accion, $ids ) {
-	if ( 'ri_revisar' !== $accion || ! current_user_can( 'upload_files' ) ) {
+	if ( 'ri_revisar' !== $accion || ! current_user_can( 'manage_options' ) ) {
 		return $url;
 	}
+	$ids = array_slice( array_filter( array_map( 'intval', (array) $ids ), function ( $id ) {
+		return current_user_can( 'edit_post', $id );
+	} ), 0, 500 );
 	return add_query_arg( 'ri_encoladas', RI_Cola::encolar( $ids ), $url );
 }, 10, 3 );
 add_action( 'admin_notices', function () {
